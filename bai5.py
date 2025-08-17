@@ -59,6 +59,7 @@ def main():
         if choice == "1":
             name = input("nhập tên học viên: ")
             manager.add_student(name)
+            print(f"Học viên {name} đã được thêm.")
         
         
 
