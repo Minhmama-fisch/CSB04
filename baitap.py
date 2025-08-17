@@ -1,61 +1,156 @@
 from abc import ABC, abstractmethod
-class book(ABC):
-    def __init__(self, book_id,title , author, year):
-        self.book_id = book_id
-        self.title = title
-        self.author = author
-        self.year = year
+
+class Book(ABC):
+    def __init__(self, book_id, title, author, year):
+        # ENCAPSULATION - thuộc tính private
+        self._book_id = book_id
+        self._title = title
+        self._author = author
+        self._year = year
+
     def get_book_id(self):
-        return self.book_id
+        return self._book_id
+
     def get_title(self):
-        return ().__gettitle()
+        return self._title
+
     def get_author(self):
-        return self.author
+        return self._author
+
     def get_year(self):
-        return self.year
+        return self._year
+
     def set_title(self, title):
-        self.__title = title
+        self._title = title
+
     def set_author(self, author):
-        self.__author = author
-    def get_year(self, year):
-        return self.__year
-    def se_title(self, title):
-        self.__title = title   
-    def set_author(self, author):
-        self.__author = author
+        self._author = author
+
     def set_year(self, year):
-        self.__year = year
+        self._year = year
+
     @abstractmethod
     def display_info(self):
         pass
-class Physical_Book(book):  # Sử dụng đúng tên class Book
-    def __init__(self, book_id, title, author, year, quality, location):
+
+class PhysicalBook(Book):
+    def __init__(self, book_id, title, author, year, quantity, location):
         super().__init__(book_id, title, author, year)
-        self.quality = quality
-        self.location = location
-    def get_quality(self):
-        return self.quality
+        self._quantity = quantity
+        self._location = location
+
+    def get_quantity(self):
+        return self._quantity
+
     def get_location(self):
-        return self.location
-    def set_quality(self, quality):
-        self.quality = quality
+        return self._location
+
+    def set_quantity(self, quantity):
+        self._quantity = quantity
+
     def set_location(self, location):
-        self.location = location
+        self._location = location
+
     def display_info(self):
-        print(f"[sách giấy] mã: {self.book_id()}, tên: {self.get_title}")
-        print f"tác giả: {self.get_author()}, năm: {self.get_year()}")
-        print (f"số lượng: {self.get_quality}, vị trí: {self.get_location}")
-class E_Book(book):  # Sử dụng đúng tên class Book
+        print(f"[Sách Giấy] Mã: {self.get_book_id()}, Tên: {self.get_title()}, "
+              f"Tác giả: {self.get_author()}, Năm: {self.get_year()}, "
+              f"Số lượng: {self._quantity}, Vị trí: {self._location}")
+
+class EBook(Book):
     def __init__(self, book_id, title, author, year, file_size, file_format):
         super().__init__(book_id, title, author, year)
-        self.__file_size = file_size
-        self.__file_format = file_format
+        self._file_size = file_size
+        self._file_format = file_format
+
     def get_file_size(self):
-        return self.__file_size
-    def get_file_format(self, fmt):
-        self.__file_format = fmt
-    def set_file_size(self, size):
-        self.__file_size = size
+        return self._file_size
+
+    def get_file_format(self):
+        return self._file_format
+
+    def set_file_size(self, file_size):
+        self._file_size = file_size
+
+    def set_file_format(self, file_format):
+        self._file_format = file_format
+
     def display_info(self):
-        print(f"[E-BOOK]" Mã: {self.get_book_id()}, Tên: {self.get_title()}")
-        
+        print(f"[EBook] Mã: {self.get_book_id()}, Tên: {self.get_title()}, "
+              f"Tác giả: {self.get_author()}, Năm: {self.get_year()}, "
+              f"Dung lượng: {self._file_size}MB, Định dạng: {self._file_format}")
+
+class Library:
+    def __init__(self):
+        self.books = []
+
+    def add_book(self, book):
+        self.books.append(book)
+        print("Thêm sách thành công!")
+
+    def display_all_books(self):
+        if not self.books:
+            print("Thư viện trống")
+        else:
+            for book in self.books:
+                book.display_info()
+
+    def find_book_by_id(self, book_id):
+        for book in self.books:
+            if book.get_book_id() == book_id:
+                return book
+        return None
+
+    def remove_book(self, book_id):
+        book = self.find_book_by_id(book_id)
+        if book:
+            self.books.remove(book)
+            print("Xóa sách thành công!")
+        else:
+            print("Không tìm thấy sách!")
+
+def main():
+    library = Library()
+    while True:
+        print("\n=== QUẢN LÝ THƯ VIỆN ===")
+        print("1. Thêm sách mới")
+        print("2. Hiển thị tất cả sách")
+        print("3. Tìm kiếm sách theo mã")
+        print("4. Xóa sách")
+        print("0. Thoát")
+        choice = input("Chọn chức năng: ")
+
+        if choice == "1":
+            book_type = input("Chọn loại sách (1: Sách giấy, 2: E-Book): ")
+            book_id = input("Nhập mã sách: ")
+            title = input("Nhập tên sách: ")
+            author = input("Nhập tác giả: ")
+            year = input("Nhập năm xuất bản: ")
+            if book_type == "1":
+                quantity = int(input("Nhập số lượng: "))
+                location = input("Nhập vị trí: ")
+                book = PhysicalBook(book_id, title, author, year, quantity, location)
+            else:
+                file_size = float(input("Nhập dung lượng (MB): "))
+                file_format = input("Nhập định dạng: ")
+                book = EBook(book_id, title, author, year, file_size, file_format)
+            library.add_book(book)
+        elif choice == "2":
+            library.display_all_books()
+        elif choice == "3":
+            book_id = input("Nhập mã sách cần tìm: ")
+            book = library.find_book_by_id(book_id)
+            if book:
+                book.display_info()
+            else:
+                print("Không tìm thấy sách!")
+        elif choice == "4":
+            book_id = input("Nhập mã sách cần xóa: ")
+            library.remove_book(book_id)
+        elif choice == "0":
+            print("Thoát chương trình.")
+            break
+        else:
+            print("Chức năng không hợp lệ!")
+
+if __name__ == "__main__":
+    main()
